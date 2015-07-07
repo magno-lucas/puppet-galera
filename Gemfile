@@ -6,6 +6,8 @@ group :development, :test do
   gem 'rake', '~> 10.1.1',       :require => false
   gem 'rspec', '< 2.99',         :require => false
   gem 'rspec-puppet',            :require => false
+  gem 'beaker',                  :require => false
+  gem 'beaker-rspec',            :require => false
 end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']
