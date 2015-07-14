@@ -9,6 +9,7 @@ group :development, :test do
   gem 'beaker',                  :require => false
   gem 'beaker-rspec',            :require => false
   gem 'vagrant-wrapper', :require => false
+  gem 'pry', :require => false
 end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']

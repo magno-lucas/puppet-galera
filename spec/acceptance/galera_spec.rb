@@ -4,7 +4,7 @@ describe 'bootstrap galera' do
   it 'should work with no errors' do
     pp = <<-EOS
       class { 'galera':
-        galera_servers  => [$::ipaddress, '192.168.99.102'],
+        galera_servers  => [$::ipaddress],
         galera_master   => $::fqdn,
         root_password   => 'root',
         status_password => 'status',

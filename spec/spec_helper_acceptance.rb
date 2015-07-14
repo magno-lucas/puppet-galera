@@ -1,5 +1,6 @@
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
+require 'pry'
 
 hosts.each do |host|
   install_puppet
@@ -23,6 +24,7 @@ RSpec.configure do |c|
       on host, puppet('module', 'install', 'puppetlabs-firewall'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'puppetlabs-xinetd'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'puppetlabs-apt', '-v 1.7.0' ), { :acceptable_exit_codes => [0,1] }
+
     end
   end
 end
