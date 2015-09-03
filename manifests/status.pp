@@ -97,7 +97,7 @@ class galera::status (
     flags                   => 'REUSE',
     log_on_success          => '',
     log_on_success_operator => '=',
-    require                 => [ File['/usr/local/bin/clustercheck'], User['clustercheck'] ],
+    require                 => [ File['/usr/local/bin/clustercheck'], User['clustercheck'], Class['mysql::server::install'] ],
     before                  => Anchor['mysql::server::end'],
   }
 }
