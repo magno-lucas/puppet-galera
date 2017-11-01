@@ -24,7 +24,7 @@ class galera::repo(
   $apt_mariadb_repo_include_src = false,
 
   # Ubuntu/codership
-  $apt_codership_repo_location     = 'http://releases.galeracluster.com/ubuntu',
+  $apt_codership_repo_location     = 'http://releases.galeracluster.com/galera-3/ubuntu',
   $apt_codership_repo_release      = $::lsbdistcodename,
   $apt_codership_repo_repos        = 'main',
   $apt_codership_repo_key          = 'BC19DDBA',
