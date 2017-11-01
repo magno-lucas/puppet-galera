@@ -20,7 +20,7 @@ describe 'galera::repo' do
       :apt_mariadb_repo_key_server   => 'keys.gnupg.net',
       :apt_mariadb_repo_include_src  => false,
 
-      :apt_codership_repo_location     => 'http://releases.galeracluster.com/ubuntu',
+      :apt_codership_repo_location     => 'http://releases.galeracluster.com/galera-3/ubuntu',
       :apt_codership_repo_release      => 'precise',
       :apt_codership_repo_repos        => 'main',
       :apt_codership_repo_key          => 'BC19DDBA',
