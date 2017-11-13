@@ -28,15 +28,20 @@ class galera::repo(
 
   # Ubuntu-Debian/codership
   $apt_codership_repo_location = $::operatingsystem ? {
-    'Debian' => 'http://releases.galeracluster.com/galera-3/debian',
-    default  => 'http://releases.galeracluster.com/galera-3/ubuntu',
+    'Debian' =>  'http://releases.galeracluster.com/galera-3/debian',
+    default  => 'http://releases.galeracluster.com/galera-3/ubuntu'
   },
+  $apt_codership_repo_location2 = $::operatingsystem ? {
+    'Debian' =>  'http://releases.galeracluster.com/mysql-wsrep-5.5/debian',
+    default  => 'http://releases.galeracluster.com/mysql-wsrep-5.5/ubuntu'
+  },
+
   $apt_codership_repo_release      = $::lsbdistcodename,
   $apt_codership_repo_repos        = 'main',
   $apt_codership_repo_key          = '44B7345738EBDE52594DAD80D669017EBC19DDBA',
   $apt_codership_repo_key_server   = 'keyserver.ubuntu.com',
   $apt_codership_repo_include_src  = false,
-
+  
   #RedHat/percona
   $yum_percona_descr = "CentOS ${::operatingsystemmajrelease} - Percona",
   $yum_percona_baseurl = "http://repo.percona.com/centos/${::operatingsystemmajrelease}/os/${::architecture}/",
@@ -100,6 +105,19 @@ class galera::repo(
         } elsif ($repo_vendor == 'codership') {
           apt::source { 'galera_codership_repo':
             location => $apt_codership_repo_location,
+            release  => $apt_codership_repo_release,
+            repos    => $apt_codership_repo_repos,
+            key      => {
+              'id'     => $apt_codership_repo_key,
+              'server' => $apt_codership_repo_key_server,
+            },
+            include  => {
+              'src' => $apt_codership_repo_include_src,
+            },
+            notify   => Exec['apt_update'],
+          }
+          apt::source { 'mysql_codership_repo':
+            location => $apt_codership_repo_location2,
             release  => $apt_codership_repo_release,
             repos    => $apt_codership_repo_repos,
             key      => {
