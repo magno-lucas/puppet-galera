@@ -18,8 +18,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     control1.vm.hostname = 'control1'
 
     control1.vm.provision :shell do |shell|
-      shell.inline = 'cp -r /vagrant/modules/* /etc/puppet/modules; ' +
-               'ln -s /vagrant /etc/puppet/modules/galera'
+      shell.inline = 'cp -r /vagrant/spec/fixtures/modules/* /etc/puppetlabs/code/modules; ' +
+                     'rm /etc/puppetlabs/code/modules/galera; '+
+				             'ln -s /vagrant /etc/puppetlabs/code/modules/galera'
     end
 
     if box == 'precise64' or box == 'trusty64'
@@ -78,8 +79,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     control2.vm.hostname = 'control2'
 
     control2.vm.provision :shell do |shell|
-      shell.inline = 'cp -r /vagrant/modules/* /etc/puppet/modules; ' +
-               'ln -s /vagrant /etc/puppet/modules/galera'
+      shell.inline = 'cp -r /vagrant/spec/fixtures/modules/* /etc/puppetlabs/code/modules; ' +
+				       'rm /etc/puppetlabs/code/modules/galera; '+ 
+               'ln -s /vagrant /etc/puppetlabs/code/modules/galera'
     end
 
     if box == 'precise64' or box == 'trusty64'
