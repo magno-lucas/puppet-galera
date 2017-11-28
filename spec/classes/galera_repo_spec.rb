@@ -131,7 +131,7 @@ describe 'galera::repo' do
           },
           :include  => {
               "src" => params[:apt_codership_repo_include_src]
-          }) 
+          })} 
 			it { should contain_apt__source('mysql_codership_repo').with(
           :location => params[:apt_codership_repo_location2],
           :release  => params[:apt_codership_repo_release],
