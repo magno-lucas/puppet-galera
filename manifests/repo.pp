@@ -31,7 +31,7 @@ class galera::repo(
     'Debian' =>  'http://releases.galeracluster.com/galera-3/debian',
     default  => 'http://releases.galeracluster.com/galera-3/ubuntu'
   },
-  $apt_codership_repo_location2 = $::operatingsystem ? {
+  $apt_codership_wsrep_repo_location = $::operatingsystem ? {
     'Debian' =>  'http://releases.galeracluster.com/mysql-wsrep-5.5/debian',
     default  => 'http://releases.galeracluster.com/mysql-wsrep-5.5/ubuntu'
   },
@@ -116,8 +116,8 @@ class galera::repo(
             },
             notify   => Exec['apt_update'],
           }
-          apt::source { 'mysql_codership_repo':
-            location => $apt_codership_repo_location2,
+          apt::source { 'wsrep_codership_location':
+            location => $apt_codership_wsrep_repo_location,
             release  => $apt_codership_repo_release,
             repos    => $apt_codership_repo_repos,
             key      => {

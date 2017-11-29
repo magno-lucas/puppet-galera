@@ -21,7 +21,7 @@ describe 'galera::repo' do
       :apt_mariadb_repo_include_src  => false,
 
       :apt_codership_repo_location     => 'http://releases.galeracluster.com/galera-3/ubuntu',
-			:apt_codership_repo_location2    => 'http://releases.galeracluster.com/mysql-wsrep-5.5/ubuntu',
+			:apt_codership_wsrep_repo_location => 'http://releases.galeracluster.com/mysql-wsrep-5.5/ubuntu',
       :apt_codership_repo_release      => 'precise',
       :apt_codership_repo_repos        => 'main',
       :apt_codership_repo_key          => '44B7345738EBDE52594DAD80D669017EBC19DDBA',
@@ -132,8 +132,8 @@ describe 'galera::repo' do
           :include  => {
               "src" => params[:apt_codership_repo_include_src]
           })} 
-			it { should contain_apt__source('mysql_codership_repo').with(
-          :location => params[:apt_codership_repo_location2],
+			it { should contain_apt__source('wsrep_codership_repo').with(
+          :location => params[:apt_codership_wsrep_repo_location],
           :release  => params[:apt_codership_repo_release],
           :repos    => params[:apt_codership_repo_repos],
           :key      => {
