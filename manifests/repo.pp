@@ -9,7 +9,7 @@ class galera::repo(
 
   # Ubuntu-Debian/percona
   $apt_percona_repo_location = 'http://repo.percona.com/apt/',
-  $apt_percona_repo_release = '${::lsbdistcodename}',
+  $apt_percona_repo_release = $::lsbdistcodename,
   $apt_percona_repo_repos = 'main',
   $apt_percona_repo_key = '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
   $apt_percona_repo_key_server = 'keyserver.ubuntu.com',
@@ -20,7 +20,7 @@ class galera::repo(
     'Debian' => 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/debian',
     default  => 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/ubuntu',
   },
-  $apt_mariadb_repo_release = '${::lsbdistcodename}',
+  $apt_mariadb_repo_release = $::lsbdistcodename,
   $apt_mariadb_repo_repos = 'main',
   $apt_mariadb_repo_key = '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
   $apt_mariadb_repo_key_server = 'keys.gnupg.net',
@@ -36,7 +36,7 @@ class galera::repo(
     default  => 'http://releases.galeracluster.com/mysql-wsrep-5.5/ubuntu'
   },
 
-  $apt_codership_repo_release      = '${::lsbdistcodename}',
+  $apt_codership_repo_release      = $::lsbdistcodename,
   $apt_codership_repo_repos        = 'main',
   $apt_codership_repo_key          = '44B7345738EBDE52594DAD80D669017EBC19DDBA',
   $apt_codership_repo_key_server   = 'keyserver.ubuntu.com',
