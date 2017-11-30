@@ -1,33 +1,44 @@
 # Class galera::repo
-
+#
 # Installs the appropriate repositories from which percona packages
 # can be installed
-
+#
 class galera::repo(
   $repo_vendor = $galera::vendor_type,
   $epel_needed = true,
 
-  # Ubuntu/percona
+  # Ubuntu-Debian/percona
   $apt_percona_repo_location = 'http://repo.percona.com/apt/',
   $apt_percona_repo_release = $::lsbdistcodename,
   $apt_percona_repo_repos = 'main',
-  $apt_percona_repo_key = '1C4CBDCDCD2EFD2A',
-  $apt_percona_repo_key_server = 'keys.gnupg.net',
+  $apt_percona_repo_key = '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
+  $apt_percona_repo_key_server = 'keyserver.ubuntu.com',
   $apt_percona_repo_include_src = false,
 
-  # Ubuntu/mariadb
-  $apt_mariadb_repo_location = 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/ubuntu',
+  # Ubuntu-Debian/mariadb
+  $apt_mariadb_repo_location = $::operatingsystem ? {
+    'Debian' => 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/debian',
+    default  => 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/ubuntu',
+  },
   $apt_mariadb_repo_release = $::lsbdistcodename,
   $apt_mariadb_repo_repos = 'main',
-  $apt_mariadb_repo_key = '1BB943DB',
+  $apt_mariadb_repo_key = '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
   $apt_mariadb_repo_key_server = 'keys.gnupg.net',
   $apt_mariadb_repo_include_src = false,
 
+<<<<<<< HEAD
   # Ubuntu/codership
   $apt_codership_repo_location     = 'http://releases.galeracluster.com/galera-3/ubuntu',
+=======
+  # Ubuntu-Debian/codership
+  $apt_codership_repo_location = $::operatingsystem ? {
+    'Debian' => 'http://releases.galeracluster.com/galera-3/debian',
+    default  => 'http://releases.galeracluster.com/galera-3/ubuntu',
+  },
+>>>>>>> upstream/master
   $apt_codership_repo_release      = $::lsbdistcodename,
   $apt_codership_repo_repos        = 'main',
-  $apt_codership_repo_key          = 'BC19DDBA',
+  $apt_codership_repo_key          = '44B7345738EBDE52594DAD80D669017EBC19DDBA',
   $apt_codership_repo_key_server   = 'keyserver.ubuntu.com',
   $apt_codership_repo_include_src  = false,
 
@@ -63,35 +74,50 @@ class galera::repo(
 
   case $::osfamily {
     'Debian': {
-      if $::operatingsystem == 'Ubuntu' {
+      if ($::operatingsystem == 'Ubuntu') or ($::operatingsystem == 'Debian') {
         if ($repo_vendor == 'percona') {
           apt::source { 'galera_percona_repo':
-            location    => $apt_percona_repo_location,
-            release     => $apt_percona_repo_release,
-            repos       => $apt_percona_repo_repos,
-            key         => $apt_percona_repo_key,
-            key_server  => $apt_percona_repo_key_server,
-            include_src => $apt_percona_repo_include_src,
+            location => $apt_percona_repo_location,
+            release  => $apt_percona_repo_release,
+            repos    => $apt_percona_repo_repos,
+            key      => {
+              'id'     => $apt_percona_repo_key,
+              'server' => $apt_percona_repo_key_server,
+            },
+            include  => {
+              'src' => $apt_percona_repo_include_src,
+            },
           }
         } elsif ($repo_vendor == 'mariadb') {
           apt::source { 'galera_mariadb_repo':
-            location    => $apt_mariadb_repo_location,
-            release     => $apt_mariadb_repo_release,
-            repos       => $apt_mariadb_repo_repos,
-            key         => $apt_mariadb_repo_key,
-            key_server  => $apt_mariadb_repo_key_server,
-            include_src => $apt_mariadb_repo_include_src,
+            location => $apt_mariadb_repo_location,
+            release  => $apt_mariadb_repo_release,
+            repos    => $apt_mariadb_repo_repos,
+            key      => {
+              'id'     => $apt_mariadb_repo_key,
+              'server' => $apt_mariadb_repo_key_server,
+            },
+            include  => {
+              'src' => $apt_mariadb_repo_include_src,
+            },
+            notify   => Exec['apt_update'],
           }
         } elsif ($repo_vendor == 'codership') {
           apt::source { 'galera_codership_repo':
-            location          => $apt_codership_repo_location,
-            release           => $apt_codership_repo_release,
-            repos             => $apt_codership_repo_repos,
-            key               => $apt_codership_repo_key,
-            key_server        => $apt_codership_repo_key_server,
-            include_src       => $apt_codership_repo_include_src,
+            location => $apt_codership_repo_location,
+            release  => $apt_codership_repo_release,
+            repos    => $apt_codership_repo_repos,
+            key      => {
+              'id'     => $apt_codership_repo_key,
+              'server' => $apt_codership_repo_key_server,
+            },
+            include  => {
+              'src' => $apt_codership_repo_include_src,
+            },
+            notify   => Exec['apt_update'],
           }
         }
+        Exec['apt_update'] -> Package<||>
       }
       if ($repo_vendor == 'osp5') {
         fail('OSP5 is only supported on RHEL platforms.')
@@ -133,11 +159,11 @@ class galera::repo(
       }
       elsif $repo_vendor == 'codership' {
         yumrepo { 'codership':
-          descr     => $yum_codership_descr,
-          enabled   => $yum_codership_enabled,
-          gpgcheck  => $yum_codership_gpgcheck,
-          gpgkey    => $yum_codership_gpgkey,
-          baseurl   => $yum_codership_baseurl
+          descr    => $yum_codership_descr,
+          enabled  => $yum_codership_enabled,
+          gpgcheck => $yum_codership_gpgcheck,
+          gpgkey   => $yum_codership_gpgkey,
+          baseurl  => $yum_codership_baseurl
         }
       }
     }

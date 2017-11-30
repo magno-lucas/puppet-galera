@@ -1,21 +1,27 @@
 # puppet-galera module
 
-[![Build Status](https://travis-ci.org/michaeltchapman/puppet-galera.png?branch=master)](https://travis-ci.org/michaeltchapman/puppet-galera)
+[![Build Status](https://travis-ci.org/fraenki/puppet-galera.png?branch=master)](https://travis-ci.org/fraenki/puppet-galera)
+
+NEWS: This is the continuation of Michael Chapman's excellent Galera module.
 
 This module will massage puppetlabs-mysql into creating a mysql galera cluster. It will try to recover from failures by bootstrapping on a node designated as the master if no other nodes appear to be running mysql, but if the cluster goes down and the master is permanently taken out, another node will need to be specified as the 'master' that can bootstrap the cluster.
 
 ## Requirements
 
-This module was build against master of the following repos in early 2014, which corresponds to the listed version:
+This module depends on, at minimum, the following modules at the listed versions:
 
-    puppetlabs-mysql    2.2.0
+    puppetlabs-mysql    3.8.0
     puppetlabs-stdlib   4.1.0
 
     # If you're on debian and need the repo to be set
-    puppetlabs-apt      1.4.1
+    puppetlabs-apt      2.0.0
 
     # If you want the firewall to be configured for you
     puppetlabs-firewall 1.0.0
+
+    # If using clustercheck
+    puppetlabs-xinetd   1.3.0
+
 ## Structure
 
 This module was created to work in tandem with the mysql module, rather than replacing it. As the stages in the mysql module are quite strictly laid out in the mysql::server class, this module places its own resources in the gaps between them. Of note is an exec that will start the mysql service with the parameter --wsrep_address=gcomm:// which will start a new cluster, but only if it cannot open the comms port to any other node in the provided list. This is done with a simple nc command and should not be considered terribly reliable.
@@ -75,10 +81,12 @@ A vagrant file is provided. Control1 is set as the master and control2 as the sl
     vagrant up control1
     vagrant up control2
 
+Vagrant support is currently not under active maintenance.
+
 ## Contributions
 
-Pull requests most welcome :)
+Please use the github issues functionality to report any bugs or requests for new features. Feel free to fork and submit pull requests for potential contributions.
 
 # Authors
 
-- Michael Chapman
+Written by Michael Chapman, currently maintained by Frank Wall.

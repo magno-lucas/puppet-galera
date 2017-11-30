@@ -9,21 +9,21 @@ describe 'galera::repo' do
       :apt_percona_repo_location     => 'http://repo.percona.com/apt/',
       :apt_percona_repo_release      => 'precise',
       :apt_percona_repo_repos        => 'main',
-      :apt_percona_repo_key          => '1C4CBDCDCD2EFD2A',
-      :apt_percona_repo_key_server   => 'keys.gnupg.net',
+      :apt_percona_repo_key          => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
+      :apt_percona_repo_key_server   => 'keyserver.ubuntu.com',
       :apt_percona_repo_include_src  => false,
 
       :apt_mariadb_repo_location     => 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/ubuntu',
       :apt_mariadb_repo_release      => 'precise',
       :apt_mariadb_repo_repos        => 'main',
-      :apt_mariadb_repo_key          => '1BB943DB',
-      :apt_mariadb_repo_key_server   => 'keys.gnupg.net',
+      :apt_mariadb_repo_key          => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+      :apt_mariadb_repo_key_server   => 'keyserver.ubuntu.com',
       :apt_mariadb_repo_include_src  => false,
 
       :apt_codership_repo_location     => 'http://releases.galeracluster.com/galera-3/ubuntu',
       :apt_codership_repo_release      => 'precise',
       :apt_codership_repo_repos        => 'main',
-      :apt_codership_repo_key          => 'BC19DDBA',
+      :apt_codership_repo_key          => '44B7345738EBDE52594DAD80D669017EBC19DDBA',
       :apt_codership_repo_key_server   => 'keyserver.ubuntu.com',
       :apt_codership_repo_include_src  => false,
 
@@ -53,13 +53,7 @@ describe 'galera::repo' do
     } "
   end
 
-  context 'on RedHat' do
-    let :facts do
-      { :osfamily => 'RedHat',
-        :operatingsystemrelease => '6.6',
-      }
-    end
-
+  shared_examples_for 'galera::repo on RedHat' do
     context 'installing percona on redhat' do
       before { params.merge!( :repo_vendor => 'percona' ) }
       it { should contain_yumrepo('percona').with(
@@ -78,8 +72,8 @@ describe 'galera::repo' do
         :gpgcheck   => params[:yum_mariadb_gpgcheck],
         :gpgkey     => params[:yum_mariadb_gpgkey]
       ) }
-    end
 
+    end
     context 'installing codership on redhat' do
       before { params.merge!( :repo_vendor => 'codership' ) }
       it { should contain_yumrepo('codership').with(
@@ -91,50 +85,72 @@ describe 'galera::repo' do
     end
   end
 
-  context 'on Ubuntu' do
-    let :facts do
-      {
-        :osfamily        => 'Debian',
-        :operatingsystem => 'Ubuntu',
-        :lsbdistid       => 'Debian',
-        :lsbdistcodename => 'precise'
-      }
-    end
-
+  shared_examples_for 'galera::repo on Ubuntu' do
     context 'installing percona on debian' do
       before { params.merge!( :repo_vendor => 'percona' ) }
       it { should contain_apt__source('galera_percona_repo').with(
-        :location      => params[:apt_percona_repo_location],
-        :release       => params[:apt_percona_repo_release],
-        :repos         => params[:apt_percona_repo_repos],
-        :key           => params[:apt_percona_repo_key],
-        :key_server    => params[:apt_percona_repo_key_server],
-        :include_src   => params[:apt_percona_repo_include_src]
+          :location => params[:apt_percona_repo_location],
+          :release  => params[:apt_percona_repo_release],
+          :repos    => params[:apt_percona_repo_repos],
+          :key      => {
+              "id"     => params[:apt_percona_repo_key],
+              "server" => params[:apt_percona_repo_key_server]
+          },
+          :include  => {
+              "src" => params[:apt_percona_repo_include_src]
+          }
       ) }
     end
 
     context 'installing mariadb on debian' do
       before { params.merge!( :repo_vendor => 'mariadb' ) }
       it { should contain_apt__source('galera_mariadb_repo').with(
-        :location      => params[:apt_mariadb_repo_location],
-        :release       => params[:apt_mariadb_repo_release],
-        :repos         => params[:apt_mariadb_repo_repos],
-        :key           => params[:apt_mariadb_repo_key],
-        :key_server    => params[:apt_mariadb_repo_key_server],
-        :include_src   => params[:apt_mariadb_repo_include_src]
+          :location => params[:apt_mariadb_repo_location],
+          :release  => params[:apt_mariadb_repo_release],
+          :repos    => params[:apt_mariadb_repo_repos],
+          :key      => {
+              "id"     => params[:apt_mariadb_repo_key],
+              "server" => params[:apt_mariadb_repo_key_server]
+          },
+          :include  => {
+              "src" => params[:apt_mariadb_repo_include_src]
+          }
       ) }
     end
 
     context 'installing codership on debian' do
       before { params.merge!( :repo_vendor => 'codership' ) }
       it { should contain_apt__source('galera_codership_repo').with(
-        :location      => params[:apt_codership_repo_location],
-        :release       => params[:apt_codership_repo_release],
-        :repos         => params[:apt_codership_repo_repos],
-        :key           => params[:apt_codership_repo_key],
-        :key_server    => params[:apt_codership_repo_key_server],
-        :include_src   => params[:apt_codership_repo_include_src]
+          :location => params[:apt_codership_repo_location],
+          :release  => params[:apt_codership_repo_release],
+          :repos    => params[:apt_codership_repo_repos],
+          :key      => {
+              "id"     => params[:apt_codership_repo_key],
+              "server" => params[:apt_codership_repo_key_server]
+          },
+          :include  => {
+              "src" => params[:apt_codership_repo_include_src]
+          }
       ) }
     end
   end
+
+  on_supported_os.each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge({})
+      end
+
+      case facts[:osfamily]
+      when 'RedHat'
+        it_configures 'galera::repo on RedHat'
+      when 'Debian'
+        if facts[:operatingsystem] == 'Ubuntu'
+          it_configures 'galera::repo on Ubuntu'
+        end
+      end
+    end
+  end
+
+
 end

@@ -1,5 +1,5 @@
 {
-  "author": "Michael Chapman",
+  "author": "Frank Wall",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
@@ -7,11 +7,11 @@
     },
     {
       "name": "puppetlabs/apt",
-      "version_requirement": ">= 1.4.1 <= 1.7.0"
+      "version_requirement": ">= 2.0.0 < 3.0.0"
     },
     {
       "name": "puppetlabs/mysql",
-      "version_requirement": ">=2.2.0"
+      "version_requirement": ">=3.8.0"
     },
     {
       "name": "puppetlabs/firewall",
@@ -22,16 +22,16 @@
       "version_requirement": ">=1.3.0"
     }
   ],
-  "description": "Install/configure MySQL with Galera",
-  "license": "Apache-2.0",
-  "name": "michaeltchapman-galera",
+  "description": "Install/configure MySQL with Galera/XtraDB cluster support",
+  "license": "BSD-2-Clause",
+  "name": "fraenki-galera",
   "operatingsystem_support": [
     {
     "operatingsystem":"Debian"
     },
     {
     "operatingsystem":"Ubuntu",
-    "operatingsystemrelease": ["12.04", "14.04"]
+    "operatingsystemrelease": ["12.04", "14.04", "16.04"]
     },
     {
     "operatingsystem":"RedHat",
@@ -48,12 +48,12 @@
     "operatingsystem":"OracleLinux"
     }
   ],
-  "project_page": "https://github.com/michaeltchapman/puppet-galera",
-  "issues_url": "https://github.com/michaeltchapman/puppet-galera/issues",
+  "project_page": "https://github.com/fraenki/puppet-galera",
+  "issues_url": "https://github.com/fraenki/puppet-galera/issues",
   "requirements": [],
-  "source": "https://github.com/michaeltchapman/puppet-galera",
+  "source": "https://github.com/fraenki/puppet-galera",
   "summary": "Install/configure MySQL with Galera",
-  "tags": ["mysql", "percona", "mariadb", "galera", "database"],
-  "version": "0.1.0"
+  "tags": ["mysql", "percona", "mariadb", "galera", "database", "codership", "cluster", "wsrep", "xtradb"],
+  "version": "0.7.1"
 }
 

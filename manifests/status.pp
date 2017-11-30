@@ -3,73 +3,72 @@
 # Configures a user and script that will check the status
 # of the galera cluster,
 #
-# === Parameters:
-#
-# [*status_password*]
-#  (required) The password of the status check user
-#
-# [*status_allow*]
-#  (optional) The subnet to allow status checks from
-#  Defaults to '%'
-#
-# [*status_host*]
-#  (optional) The cluster to add the cluster check user to
-#  Defaults to 'localhost'
-#
-# [*status_user*]
-#  (optional) The name of the user to use for status checks
-#  Defaults to 'clustercheck'
-#
-# [*port*]
-#  (optional) Port for cluster check service
-#  Defaults to 9200
-#
-# [*available_when_donor*]
-#  (optional) When set to 1, the node will remain in the cluster
-#  when it enters donor mode. A value of 0 will remove the node
-#  from the cluster.
-#  Defaults to 0
-#
-# [*available_when_readonly*]
-#  (optional) When set to 0, clustercheck will return a 503
-#  Service Unavailable if the node is in the read_only state,
-#  as defined by the "read_only" mysql variable. Values other
-#  than 0 have no effect.
-#  Defaults to -1
-#
-class galera::status (
-  $status_password  = $galera::status_password,
-  $status_allow     = '%',
-  $status_host      = 'localhost',
-  $status_user      = 'clustercheck',
-  $port             = 9200,
-  $available_when_donor    = 0,
-  $available_when_readonly = -1,
-) {
+class galera::status {
+  $status_password                = $galera::status_password
+  $status_allow                   = $galera::status_allow
+  $status_host                    = $galera::status_host
+  $status_user                    = $galera::status_user
+  $port                           = $galera::status_port
+  $available_when_donor           = $galera::status_available_when_donor
+  $available_when_readonly        = $galera::status_available_when_readonly
+  $status_log_on_success_operator = $galera::status_log_on_success_operator
+  $status_log_on_success          = $galera::status_log_on_success
+  $status_log_on_failure          = $galera::status_log_on_failure
+  $create_status_user             = $galera::create_status_user
 
   if ! $status_password {
-    fail('galera::status::status_password unset. Please specify a password for the clustercheck MySQL user.')
+    fail('galera::status_password unset. Please specify a password for the clustercheck MySQL user.')
   }
 
-  mysql_user { "${status_user}@${status_allow}":
-    ensure        => 'present',
-    password_hash => mysql_password($status_password),
-    require       => [File['/root/.my.cnf'],Service['mysqld']]
-  } ->
-  mysql_grant { "${status_user}@${status_allow}/*.*":
-    ensure     => 'present',
-    options    => [ 'GRANT' ],
-    privileges => [ 'USAGE' ],
-    table      => '*.*',
-    user       => "${status_user}@${status_allow}",
-    before     => Anchor['mysql::server::end']
+  $_require = $galera::create_root_my_cnf ?  {
+    true  => [File["${::root_home}/.my.cnf"],Service['mysqld']] ,
+    false => Service['mysqld']
   }
 
-  user{'clustercheck':
+  if ( $create_status_user == true ) {
+    if $status_allow != 'localhost' {
+      mysql_user { "${status_user}@${status_allow}":
+        ensure        => 'present',
+        password_hash => mysql_password($status_password),
+        require       => $_require
+      } ->
+      mysql_grant { "${status_user}@${status_allow}/*.*":
+        ensure     => 'present',
+        options    => [ 'GRANT' ],
+        privileges => [ 'USAGE' ],
+        table      => '*.*',
+        user       => "${status_user}@${status_allow}",
+        before     => Anchor['mysql::server::end']
+      }
+    }
+
+    mysql_user { "${status_user}@localhost":
+      ensure        => 'present',
+      password_hash => mysql_password($status_password),
+      require       => $_require
+    } ->
+    mysql_grant { "${status_user}@localhost/*.*":
+      ensure     => 'present',
+      options    => [ 'GRANT' ],
+      privileges => [ 'USAGE' ],
+      table      => '*.*',
+      user       => "${status_user}@localhost",
+      before     => Anchor['mysql::server::end']
+    }
+  }
+
+  group { 'clustercheck':
+    ensure => present,
+    system => true,
+  }
+
+  user { 'clustercheck':
     shell  => '/bin/false',
     home   => '/var/empty',
+    gid    => 'clustercheck',
+    system => true,
     before => File['/usr/local/bin/clustercheck'],
-    }
+  }
 
   file { '/usr/local/bin/clustercheck':
     content => template('galera/clustercheck.erb'),
@@ -82,22 +81,33 @@ class galera::status (
   augeas { 'mysqlchk':
     context => '/files/etc/services',
     changes => [
+      "rm /files/etc/services/service-name[port = '${port}']",
       "set /files/etc/services/service-name[port = '${port}']/port ${port}",
       "set /files/etc/services/service-name[port = '${port}'] mysqlchk",
       "set /files/etc/services/service-name[port = '${port}']/protocol tcp",
     ],
+    onlyif  => "match service-name[. = 'mysqlchk'] size == 0",
     before  => Anchor['mysql::server::end'],
   }
-
 
   xinetd::service { 'mysqlchk':
     server                  => '/usr/local/bin/clustercheck',
     port                    => $port,
     user                    => 'clustercheck',
     flags                   => 'REUSE',
+<<<<<<< HEAD
     log_on_success          => '',
     log_on_success_operator => '=',
     require                 => [ File['/usr/local/bin/clustercheck'], User['clustercheck'], Class['mysql::server::install'] ],
+=======
+    log_on_success          => $status_log_on_success,
+    log_on_success_operator => $status_log_on_success_operator,
+    log_on_failure          => $status_log_on_failure,
+    require                 => [
+      File['/usr/local/bin/clustercheck'],
+      User['clustercheck'],
+      Class['mysql::server::install']],
+>>>>>>> upstream/master
     before                  => Anchor['mysql::server::end'],
   }
 }
