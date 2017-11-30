@@ -95,11 +95,6 @@ class galera::status {
     port                    => $port,
     user                    => 'clustercheck',
     flags                   => 'REUSE',
-<<<<<<< HEAD
-    log_on_success          => '',
-    log_on_success_operator => '=',
-    require                 => [ File['/usr/local/bin/clustercheck'], User['clustercheck'], Class['mysql::server::install'] ],
-=======
     log_on_success          => $status_log_on_success,
     log_on_success_operator => $status_log_on_success_operator,
     log_on_failure          => $status_log_on_failure,
@@ -107,7 +102,6 @@ class galera::status {
       File['/usr/local/bin/clustercheck'],
       User['clustercheck'],
       Class['mysql::server::install']],
->>>>>>> upstream/master
     before                  => Anchor['mysql::server::end'],
   }
 }

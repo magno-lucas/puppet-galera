@@ -26,16 +26,11 @@ class galera::repo(
   $apt_mariadb_repo_key_server = 'keys.gnupg.net',
   $apt_mariadb_repo_include_src = false,
 
-<<<<<<< HEAD
-  # Ubuntu/codership
-  $apt_codership_repo_location     = 'http://releases.galeracluster.com/galera-3/ubuntu',
-=======
   # Ubuntu-Debian/codership
   $apt_codership_repo_location = $::operatingsystem ? {
     'Debian' => 'http://releases.galeracluster.com/galera-3/debian',
     default  => 'http://releases.galeracluster.com/galera-3/ubuntu',
   },
->>>>>>> upstream/master
   $apt_codership_repo_release      = $::lsbdistcodename,
   $apt_codership_repo_repos        = 'main',
   $apt_codership_repo_key          = '44B7345738EBDE52594DAD80D669017EBC19DDBA',
